@@ -47,6 +47,24 @@
             @endif
         </div>
 
+        <hr class="my-6 border-gray-200">
+        <h3 class="text-lg font-medium text-gray-900">Informasi Bisnis</h3>
+
+        <div>
+            <x-input-label for="business_name" value="Nama Bisnis" />
+            <x-text-input id="business_name" name="business_name" type="text" class="mt-1 block w-full"
+                :value="old('business_name', $business->business_name ?? '')" required />
+            <x-input-error class="mt-2" :messages="$errors->get('business_name')" />
+        </div>
+
+        <div>
+            <x-input-label for="industry" value="Industri / Bidang" />
+            <x-text-input id="industry" name="industry" type="text" class="mt-1 block w-full"
+                :value="old('industry', $business->industry ?? '')" placeholder="Contoh: F&B, Retail, Jasa..." />
+            <x-input-error class="mt-2" :messages="$errors->get('industry')" />
+        </div>
+        <hr class="my-6 border-gray-200">
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

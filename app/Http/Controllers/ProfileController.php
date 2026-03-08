@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use App\Models\Business; // Tambahkan import model Business
 
 class ProfileController extends Controller
 {
@@ -16,8 +17,12 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        // Ambil data bisnis milik user yang sedang login
+        $business = Business::where('user_id', $request->user()->id)->first();
+
         return view('profile.edit', [
             'user' => $request->user(),
+            'business' => $business, // Kirim data $business ke view
         ]);
     }
 
@@ -33,6 +38,15 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+
+        // Simpan atau perbarui data profil bisnis
+        Business::updateOrCreate(
+            ['user_id' => $request->user()->id],
+            [
+                'business_name' => $request->business_name,
+                'industry' => $request->industry
+            ]
+        );
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

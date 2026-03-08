@@ -24,11 +24,13 @@ class EvaluationController extends Controller
      */
     public function initWizard()
     {
-        // Gunakan Auth::id() dan Auth::user() agar Intelephense tidak protes
-        $business = Business::firstOrCreate(
-            ['user_id' => Auth::id()],
-            ['business_name' => 'Bisnis ' . Auth::user()->name]
-        );
+        // Cari profil bisnis
+        $business = Business::where('user_id', Auth::id())->first();
+
+        // Jika user tidak punya profil bisnis (misal user lama), arahkan ke halaman edit profil
+        if (!$business || empty($business->business_name)) {
+            return redirect()->route('profile.edit')->with('status', 'Silakan lengkapi nama bisnis Anda terlebih dahulu sebelum memulai evaluasi.');
+        }
 
         // Cek apakah ada draft yang belum selesai
         $evaluation = Evaluation::firstOrCreate(
