@@ -43,7 +43,7 @@
                             class="flex-shrink-0 w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center font-bold text-sm shadow-sm">
                             {{ $index + 1 }}
                         </span>
-                        <span>{{ $question->question_text }}</span>
+                        <span>{{ $question->question }}</span>
                     </h3>
 
                     <div class="grid grid-cols-2 md:grid-cols-5 gap-3 pl-0 md:pl-12">
