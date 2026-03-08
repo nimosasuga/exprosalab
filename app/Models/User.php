@@ -74,7 +74,7 @@ class User extends Authenticatable
         if (!$this->subscription) {
             return false;
         }
-    
+
         return $this->subscription->expires_at > now();
     }
 
@@ -89,7 +89,7 @@ class User extends Authenticatable
         if (is_object($this->role)) {
             return $this->role->name === 'admin';
         }
-        
+
         // Jika $this->role ternyata string (kolom database), cek langsung teksnya
         return $this->role === 'admin';
     }
@@ -102,7 +102,7 @@ class User extends Authenticatable
         if (is_object($this->role)) {
             return $this->role->name === 'premium';
         }
-        
+
         return $this->role === 'premium';
     }
 
@@ -114,7 +114,7 @@ class User extends Authenticatable
         if (is_object($this->role)) {
             return $this->role->name === 'free';
         }
-        
+
         return $this->role === 'free';
     }
 }
