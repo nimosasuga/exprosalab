@@ -1,0 +1,37 @@
+[07-Mar-2026 07:18:57 UTC] PHP Fatal error:  Cannot declare class RoleSeeder, because the name is already in use in /home/exprosal/exprosa-lab/database/seeders/RoleSeeder.php on line 6
+[07-Mar-2026 17:47:09 UTC] PHP Fatal error:  Uncaught TypeError: Illuminate\Foundation\Configuration\ApplicationBuilder::withRouting(): Argument #1 ($using) must be of type ?Closure, string given, called in /home/exprosal/exprosa-lab/bootstrap/app.php on line 8 and defined in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:152
+Stack trace:
+#0 /home/exprosal/exprosa-lab/bootstrap/app.php(8): Illuminate\Foundation\Configuration\ApplicationBuilder->withRouting()
+#1 /home/exprosal/exprosa-lab/artisan(14): require_once('/home/exprosal/...')
+#2 {main}
+  thrown in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php on line 152
+[07-Mar-2026 17:47:15 UTC] PHP Fatal error:  Uncaught TypeError: Illuminate\Foundation\Configuration\ApplicationBuilder::withRouting(): Argument #1 ($using) must be of type ?Closure, string given, called in /home/exprosal/exprosa-lab/bootstrap/app.php on line 8 and defined in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:152
+Stack trace:
+#0 /home/exprosal/exprosa-lab/bootstrap/app.php(8): Illuminate\Foundation\Configuration\ApplicationBuilder->withRouting()
+#1 /home/exprosal/exprosa-lab/artisan(14): require_once('/home/exprosal/...')
+#2 {main}
+  thrown in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php on line 152
+[07-Mar-2026 17:47:49 UTC] PHP Fatal error:  Uncaught TypeError: Illuminate\Foundation\Configuration\ApplicationBuilder::withRouting(): Argument #1 ($using) must be of type ?Closure, string given, called in /home/exprosal/exprosa-lab/bootstrap/app.php on line 8 and defined in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:152
+Stack trace:
+#0 /home/exprosal/exprosa-lab/bootstrap/app.php(8): Illuminate\Foundation\Configuration\ApplicationBuilder->withRouting()
+#1 /home/exprosal/exprosa-lab/artisan(14): require_once('/home/exprosal/...')
+#2 {main}
+  thrown in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php on line 152
+[07-Mar-2026 17:48:33 UTC] PHP Fatal error:  Uncaught TypeError: Illuminate\Foundation\Configuration\ApplicationBuilder::withRouting(): Argument #1 ($using) must be of type ?Closure, string given, called in /home/exprosal/exprosa-lab/bootstrap/app.php on line 8 and defined in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:152
+Stack trace:
+#0 /home/exprosal/exprosa-lab/bootstrap/app.php(8): Illuminate\Foundation\Configuration\ApplicationBuilder->withRouting()
+#1 /home/exprosal/exprosa-lab/artisan(14): require_once('/home/exprosal/...')
+#2 {main}
+  thrown in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php on line 152
+[07-Mar-2026 17:48:44 UTC] PHP Fatal error:  Uncaught TypeError: Illuminate\Foundation\Configuration\ApplicationBuilder::withRouting(): Argument #1 ($using) must be of type ?Closure, string given, called in /home/exprosal/exprosa-lab/bootstrap/app.php on line 8 and defined in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:152
+Stack trace:
+#0 /home/exprosal/exprosa-lab/bootstrap/app.php(8): Illuminate\Foundation\Configuration\ApplicationBuilder->withRouting()
+#1 /home/exprosal/exprosa-lab/artisan(14): require_once('/home/exprosal/...')
+#2 {main}
+  thrown in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php on line 152
+[07-Mar-2026 17:49:39 UTC] PHP Fatal error:  Uncaught TypeError: Illuminate\Foundation\Configuration\ApplicationBuilder::withRouting(): Argument #1 ($using) must be of type ?Closure, string given, called in /home/exprosal/exprosa-lab/bootstrap/app.php on line 8 and defined in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:152
+Stack trace:
+#0 /home/exprosal/exprosa-lab/bootstrap/app.php(8): Illuminate\Foundation\Configuration\ApplicationBuilder->withRouting()
+#1 /home/exprosal/exprosa-lab/artisan(14): require_once('/home/exprosal/...')
+#2 {main}
+  thrown in /home/exprosal/exprosa-lab/vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php on line 152
