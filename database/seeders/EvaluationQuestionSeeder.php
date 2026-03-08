@@ -4,77 +4,83 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class EvaluationQuestionSeeder extends Seeder
 {
     public function run(): void
     {
+        // Matikan pengecekan foreign key sementara
+        Schema::disableForeignKeyConstraints();
+
+        // Hapus data lama
+        DB::table('evaluation_questions')->truncate();
+
+        // Nyalakan kembali
+        Schema::enableForeignKeyConstraints();
 
         $questions = [
+            // 1. MARKET (Product-Market Fit & Validasi Pasar)
+            ['category_id'=>1,'code'=>'market_1','question'=>'Apakah Anda memiliki profil Ideal Customer Profile (ICP) atau target pasar yang spesifik?'],
+            ['category_id'=>1,'code'=>'market_2','question'=>'Apakah masalah yang diselesaikan produk Anda sangat mendesak bagi pelanggan?'],
+            ['category_id'=>1,'code'=>'market_3','question'=>'Apakah Anda tahu persis siapa kompetitor utama dan bagaimana Anda berbeda dari mereka?'],
+            ['category_id'=>1,'code'=>'market_4','question'=>'Apakah ukuran pasar Anda cukup besar untuk mendukung skala pertumbuhan bisnis?'],
+            ['category_id'=>1,'code'=>'market_5','question'=>'Apakah prospek sudah menyadari bahwa mereka memiliki masalah yang Anda selesaikan?'],
+            ['category_id'=>1,'code'=>'market_6','question'=>'Apakah Anda memiliki keunggulan kompetitif (Unique Selling Proposition) yang sulit ditiru?'],
+            ['category_id'=>1,'code'=>'market_7','question'=>'Apakah tren pasar saat ini mendukung pertumbuhan produk atau layanan Anda?'],
+            ['category_id'=>1,'code'=>'market_8','question'=>'Apakah Anda secara rutin mengumpulkan umpan balik (feedback) langsung dari pelanggan?'],
+            ['category_id'=>1,'code'=>'market_9','question'=>'Apakah produk Anda sudah terbukti mencapai Product-Market Fit (dibutuhkan & dicari)?'],
+            ['category_id'=>1,'code'=>'market_10','question'=>'Apakah pasar bersedia membayar dengan harga yang Anda tetapkan tanpa banyak penolakan?'],
 
-        // MARKET
-        ['category_id'=>1,'code'=>'market_1','question'=>'Apakah bisnis Anda memiliki target market yang jelas?'],
-        ['category_id'=>1,'code'=>'market_2','question'=>'Apakah ada permintaan pasar yang stabil terhadap produk Anda?'],
-        ['category_id'=>1,'code'=>'market_3','question'=>'Apakah pelanggan memahami manfaat produk Anda?'],
-        ['category_id'=>1,'code'=>'market_4','question'=>'Apakah pasar Anda sedang berkembang?'],
-        ['category_id'=>1,'code'=>'market_5','question'=>'Apakah Anda memahami masalah utama pelanggan?'],
-        ['category_id'=>1,'code'=>'market_6','question'=>'Apakah ukuran pasar cukup besar untuk berkembang?'],
-        ['category_id'=>1,'code'=>'market_7','question'=>'Apakah pelanggan aktif mencari solusi seperti produk Anda?'],
-        ['category_id'=>1,'code'=>'market_8','question'=>'Apakah bisnis Anda memiliki positioning yang jelas di pasar?'],
-        ['category_id'=>1,'code'=>'market_9','question'=>'Apakah kompetisi di pasar masih memungkinkan Anda berkembang?'],
-        ['category_id'=>1,'code'=>'market_10','question'=>'Apakah bisnis Anda memiliki niche market yang spesifik?'],
+            // 2. VISIBILITY (Awareness, Trafik & Branding)
+            ['category_id'=>2,'code'=>'visibility_1','question'=>'Apakah target pasar Anda mudah menemukan bisnis Anda secara online (Search/Sosmed)?'],
+            ['category_id'=>2,'code'=>'visibility_2','question'=>'Apakah Anda memiliki strategi konten pemasaran yang konsisten?'],
+            ['category_id'=>2,'code'=>'visibility_3','question'=>'Apakah Anda menggunakan lebih dari satu saluran (channel) untuk mendatangkan traffic?'],
+            ['category_id'=>2,'code'=>'visibility_4','question'=>'Apakah biaya untuk mendatangkan pengunjung (Cost Per Click/View) masih efisien?'],
+            ['category_id'=>2,'code'=>'visibility_5','question'=>'Apakah brand Anda memiliki identitas visual dan pesan yang konsisten di semua platform?'],
+            ['category_id'=>2,'code'=>'visibility_6','question'=>'Apakah Anda aktif membangun interaksi dengan audiens (tidak hanya berjualan keras)?'],
+            ['category_id'=>2,'code'=>'visibility_7','question'=>'Apakah Anda melacak metrik jangkauan (reach) dan impresi secara rutin?'],
+            ['category_id'=>2,'code'=>'visibility_8','question'=>'Apakah Anda bekerja sama dengan mitra, komunitas, atau KOL/influencer untuk eksposur?'],
+            ['category_id'=>2,'code'=>'visibility_9','question'=>'Apakah Anda mengoptimalkan SEO lokal atau mesin pencari untuk bisnis Anda?'],
+            ['category_id'=>2,'code'=>'visibility_10','question'=>'Apakah materi iklan dan promosi Anda selalu berhasil menarik perhatian (Hook yang kuat)?'],
 
-        // PRODUCT
-        ['category_id'=>2,'code'=>'product_1','question'=>'Apakah produk Anda menyelesaikan masalah nyata pelanggan?'],
-        ['category_id'=>2,'code'=>'product_2','question'=>'Apakah kualitas produk konsisten?'],
-        ['category_id'=>2,'code'=>'product_3','question'=>'Apakah pelanggan melakukan repeat order?'],
-        ['category_id'=>2,'code'=>'product_4','question'=>'Apakah produk memiliki keunggulan dibanding kompetitor?'],
-        ['category_id'=>2,'code'=>'product_5','question'=>'Apakah produk mudah dipahami oleh pelanggan?'],
-        ['category_id'=>2,'code'=>'product_6','question'=>'Apakah pelanggan puas dengan produk Anda?'],
-        ['category_id'=>2,'code'=>'product_7','question'=>'Apakah produk memiliki diferensiasi jelas?'],
-        ['category_id'=>2,'code'=>'product_8','question'=>'Apakah produk dapat terus dikembangkan?'],
-        ['category_id'=>2,'code'=>'product_9','question'=>'Apakah produk memiliki nilai unik di pasar?'],
-        ['category_id'=>2,'code'=>'product_10','question'=>'Apakah produk memiliki standar kualitas yang jelas?'],
+            // 3. CONVERSION (Sales Funnel & Closing)
+            ['category_id'=>3,'code'=>'conversion_1','question'=>'Apakah Anda memiliki proses penjualan (sales funnel) yang jelas dari prospek ke pembeli?'],
+            ['category_id'=>3,'code'=>'conversion_2','question'=>'Apakah tingkat konversi (conversion rate) website atau tim sales Anda memuaskan?'],
+            ['category_id'=>3,'code'=>'conversion_3','question'=>'Apakah tim sales memiliki naskah (script) penawaran atau SOP closing yang teruji?'],
+            ['category_id'=>3,'code'=>'conversion_4','question'=>'Apakah Anda memiliki sistem tindak lanjut (follow-up) rutin untuk prospek yang belum membeli?'],
+            ['category_id'=>3,'code'=>'conversion_5','question'=>'Apakah penawaran (offer) Anda dikemas sangat menarik sehingga sulit ditolak pelanggan?'],
+            ['category_id'=>3,'code'=>'conversion_6','question'=>'Apakah pelanggan merasa mudah saat melakukan proses pembelian atau checkout?'],
+            ['category_id'=>3,'code'=>'conversion_7','question'=>'Apakah Anda memiliki cara efektif untuk menangani keberatan (objections) pelanggan?'],
+            ['category_id'=>3,'code'=>'conversion_8','question'=>'Apakah Anda menggunakan elemen "Social Proof" (testimoni/review) untuk meyakinkan pembeli?'],
+            ['category_id'=>3,'code'=>'conversion_9','question'=>'Apakah ada sistem retargeting/iklan ulang untuk orang yang baru sekadar melihat produk?'],
+            ['category_id'=>3,'code'=>'conversion_10','question'=>'Apakah Anda melacak secara detail penyebab utama mengapa calon pembeli gagal membeli?'],
 
-        // MARKETING
-        ['category_id'=>3,'code'=>'marketing_1','question'=>'Apakah bisnis memiliki channel marketing utama?'],
-        ['category_id'=>3,'code'=>'marketing_2','question'=>'Apakah bisnis memiliki sistem akuisisi pelanggan yang konsisten?'],
-        ['category_id'=>3,'code'=>'marketing_3','question'=>'Apakah brand bisnis dikenal oleh target market?'],
-        ['category_id'=>3,'code'=>'marketing_4','question'=>'Apakah bisnis memiliki strategi konten marketing?'],
-        ['category_id'=>3,'code'=>'marketing_5','question'=>'Apakah bisnis memiliki funnel marketing yang jelas?'],
-        ['category_id'=>3,'code'=>'marketing_6','question'=>'Apakah biaya akuisisi pelanggan masih sehat?'],
-        ['category_id'=>3,'code'=>'marketing_7','question'=>'Apakah bisnis memiliki database pelanggan?'],
-        ['category_id'=>3,'code'=>'marketing_8','question'=>'Apakah bisnis memanfaatkan digital marketing secara efektif?'],
-        ['category_id'=>3,'code'=>'marketing_9','question'=>'Apakah bisnis memiliki sistem follow-up pelanggan?'],
-        ['category_id'=>3,'code'=>'marketing_10','question'=>'Apakah strategi promosi menghasilkan konversi yang baik?'],
+            // 4. MONETIZATION (Profitabilitas, LTV & Retensi)
+            ['category_id'=>4,'code'=>'monetization_1','question'=>'Apakah margin keuntungan dari produk/layanan Anda sehat dan menutupi semua biaya?'],
+            ['category_id'=>4,'code'=>'monetization_2','question'=>'Apakah Anda memiliki strategi Upsell, Cross-sell, atau Downsell saat transaksi terjadi?'],
+            ['category_id'=>4,'code'=>'monetization_3','question'=>'Apakah pelanggan yang sudah membeli kembali lagi untuk melakukan repeat order?'],
+            ['category_id'=>4,'code'=>'monetization_4','question'=>'Apakah Nilai Seumur Hidup Pelanggan (CLTV) Anda jauh lebih besar dari Biaya Akuisisinya (CAC)?'],
+            ['category_id'=>4,'code'=>'monetization_5','question'=>'Apakah strategi penetapan harga Anda mencerminkan nilai sebenarnya yang pelanggan dapatkan?'],
+            ['category_id'=>4,'code'=>'monetization_6','question'=>'Apakah Anda memiliki potensi/sistem model pendapatan berulang (subscription/retainer)?'],
+            ['category_id'=>4,'code'=>'monetization_7','question'=>'Apakah Anda memiliki program referal yang membuat pelanggan lama mendatangkan pelanggan baru?'],
+            ['category_id'=>4,'code'=>'monetization_8','question'=>'Apakah Anda mengetahui dengan pasti produk mana yang memberikan persentase profit terbesar?'],
+            ['category_id'=>4,'code'=>'monetization_9','question'=>'Apakah harga bisa Anda naikkan tanpa takut kehilangan mayoritas pelanggan Anda?'],
+            ['category_id'=>4,'code'=>'monetization_10','question'=>'Apakah proses penagihan piutang dan pemasukan kas Anda berjalan lancar?'],
 
-        // OPERATION
-        ['category_id'=>4,'code'=>'operation_1','question'=>'Apakah proses operasional terdokumentasi dengan baik?'],
-        ['category_id'=>4,'code'=>'operation_2','question'=>'Apakah bisnis dapat berjalan tanpa kehadiran owner setiap saat?'],
-        ['category_id'=>4,'code'=>'operation_3','question'=>'Apakah tim memiliki pembagian tugas yang jelas?'],
-        ['category_id'=>4,'code'=>'operation_4','question'=>'Apakah operasional bisnis efisien?'],
-        ['category_id'=>4,'code'=>'operation_5','question'=>'Apakah ada sistem kontrol kualitas?'],
-        ['category_id'=>4,'code'=>'operation_6','question'=>'Apakah bisnis memiliki SOP yang jelas?'],
-        ['category_id'=>4,'code'=>'operation_7','question'=>'Apakah operasional dapat diskalakan?'],
-        ['category_id'=>4,'code'=>'operation_8','question'=>'Apakah workflow kerja terstruktur?'],
-        ['category_id'=>4,'code'=>'operation_9','question'=>'Apakah tim dapat bekerja secara mandiri?'],
-        ['category_id'=>4,'code'=>'operation_10','question'=>'Apakah bisnis memiliki sistem monitoring kinerja?'],
-
-        // FINANCE
-        ['category_id'=>5,'code'=>'finance_1','question'=>'Apakah bisnis menghasilkan profit secara konsisten?'],
-        ['category_id'=>5,'code'=>'finance_2','question'=>'Apakah cashflow bisnis stabil?'],
-        ['category_id'=>5,'code'=>'finance_3','question'=>'Apakah bisnis memiliki laporan keuangan rutin?'],
-        ['category_id'=>5,'code'=>'finance_4','question'=>'Apakah margin produk sehat?'],
-        ['category_id'=>5,'code'=>'finance_5','question'=>'Apakah biaya operasional terkontrol?'],
-        ['category_id'=>5,'code'=>'finance_6','question'=>'Apakah bisnis memiliki cadangan kas?'],
-        ['category_id'=>5,'code'=>'finance_7','question'=>'Apakah harga produk memberikan keuntungan cukup?'],
-        ['category_id'=>5,'code'=>'finance_8','question'=>'Apakah bisnis memiliki perencanaan keuangan?'],
-        ['category_id'=>5,'code'=>'finance_9','question'=>'Apakah hutang bisnis terkendali?'],
-        ['category_id'=>5,'code'=>'finance_10','question'=>'Apakah arus kas dapat diprediksi dengan baik?'],
-
+            // 5. SYSTEM (Operasional, Tim, & Skalabilitas)
+            ['category_id'=>5,'code'=>'system_1','question'=>'Apakah setiap alur kerja bisnis memiliki Standar Operasional Prosedur (SOP) yang tertulis?'],
+            ['category_id'=>5,'code'=>'system_2','question'=>'Apakah bisnis dapat beroperasi normal jika Anda (Owner) tidak hadir selama satu bulan penuh?'],
+            ['category_id'=>5,'code'=>'system_3','question'=>'Apakah Anda menggunakan software/tools untuk mengotomatisasi tugas-tugas administratif rutin?'],
+            ['category_id'=>5,'code'=>'system_4','question'=>'Apakah setiap anggota tim memiliki peran dan Key Performance Indicator (KPI) yang jelas?'],
+            ['category_id'=>5,'code'=>'system_5','question'=>'Apakah proses rekrutmen, onboarding, dan pelatihan karyawan baru sudah tersistem dengan baik?'],
+            ['category_id'=>5,'code'=>'system_6','question'=>'Apakah bisnis memiliki sistem pelaporan keuangan (laba-rugi/cashflow) yang akurat tiap bulan?'],
+            ['category_id'=>5,'code'=>'system_7','question'=>'Apakah infrastruktur dan kapasitas produksi siap jika tiba-tiba permintaan naik 3x lipat?'],
+            ['category_id'=>5,'code'=>'system_8','question'=>'Apakah terdapat sistem Quality Control untuk menjamin standar kualitas produk selalu sama?'],
+            ['category_id'=>5,'code'=>'system_9','question'=>'Apakah koordinasi dan pelacakan tugas antar divisi berjalan transparan dan terpusat?'],
+            ['category_id'=>5,'code'=>'system_10','question'=>'Apakah Anda memiliki dashboard metrik bisnis utama yang dipantau harian/mingguan?'],
         ];
 
         DB::table('evaluation_questions')->insert($questions);
-
     }
 }

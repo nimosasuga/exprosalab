@@ -4,40 +4,42 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class EvaluationCategorySeeder extends Seeder
 {
     public function run(): void
     {
+        // Matikan pengecekan foreign key sementara
+        Schema::disableForeignKeyConstraints();
+
+        // Hapus data lama
+        DB::table('evaluation_categories')->truncate();
+
+        // Nyalakan kembali pengecekan foreign key
+        Schema::enableForeignKeyConstraints();
 
         DB::table('evaluation_categories')->insert([
-
             [
                 'name' => 'Market',
                 'code' => 'market'
             ],
-
             [
-                'name' => 'Product',
-                'code' => 'product'
+                'name' => 'Visibility',
+                'code' => 'visibility'
             ],
-
             [
-                'name' => 'Marketing',
-                'code' => 'marketing'
+                'name' => 'Conversion',
+                'code' => 'conversion'
             ],
-
             [
-                'name' => 'Operation',
-                'code' => 'operation'
+                'name' => 'Monetization',
+                'code' => 'monetization'
             ],
-
             [
-                'name' => 'Finance',
-                'code' => 'finance'
+                'name' => 'System',
+                'code' => 'system'
             ]
-
         ]);
-
     }
 }
