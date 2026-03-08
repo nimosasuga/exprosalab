@@ -6,30 +6,48 @@ class EvaluationService
 {
     /**
      * Menghitung status kesehatan bisnis berdasarkan total skor.
+     * Skor Maksimal = 250 (50 pertanyaan x 5)
      */
     public function determineHealthStatus(int $totalScore): string
     {
-        if ($totalScore <= 80) return 'Critical';
-        if ($totalScore <= 130) return 'Weak';
-        if ($totalScore <= 180) return 'Stable';
-        return 'Strong';
+        if ($totalScore <= 100) return 'Kritis (Critical)';
+        if ($totalScore <= 150) return 'Rentan (Weak)';
+        if ($totalScore <= 200) return 'Stabil (Stable)';
+        return 'Kuat (Strong)';
     }
 
     /**
-     * Menghasilkan diagnosis sederhana berdasarkan skor kategori.
+     * Menghasilkan diagnosis dan rekomendasi berdasarkan skor tiap kategori.
+     * Skor maksimal per kategori = 50. Batas aman (threshold) = 35.
      */
-    public function generateDiagnosis(array $categoryScores): array
+    public function generateDiagnosis(array $scores): array
     {
-        $recommendations = [];
+        $diagnosis = [];
 
-        if (($categoryScores['marketing'] ?? 0) < 25) {
-            $recommendations[] = "Kelemahan utama pada akuisisi pelanggan. Bangun channel marketing yang konsisten.";
+        if (($scores['market'] ?? 0) < 35) {
+            $diagnosis[] = "Market: Validasi pasar masih lemah. Anda berisiko membuat produk yang tidak dibutuhkan atau menyasar audiens yang salah.";
         }
 
-        if (($categoryScores['finance'] ?? 0) < 25) {
-            $recommendations[] = "Risiko finansial tinggi. Perbaiki cashflow dan perketat kontrol biaya.";
+        if (($scores['visibility'] ?? 0) < 35) {
+            $diagnosis[] = "Visibility: Jangkauan brand rendah. Target pasar kesulitan menemukan bisnis atau penawaran Anda.";
         }
 
-        return $recommendations;
+        if (($scores['conversion'] ?? 0) < 35) {
+            $diagnosis[] = "Conversion: Banyak prospek yang bocor. Perbaiki penawaran, funnel penjualan, dan cara tim menangani penolakan.";
+        }
+
+        if (($scores['monetization'] ?? 0) < 35) {
+            $diagnosis[] = "Monetization: Profitabilitas belum maksimal. Evaluasi kembali margin keuntungan, nilai umur pelanggan (LTV), dan strategi pricing.";
+        }
+
+        if (($scores['system'] ?? 0) < 35) {
+            $diagnosis[] = "System: Operasional masih terlalu bergantung pada Anda (Owner). Bisnis sulit di-scale up tanpa SOP dan pendelegasian yang baik.";
+        }
+
+        if (empty($diagnosis)) {
+            $diagnosis[] = "Selamat! Kelima pilar bisnis Anda berkinerja sangat baik dan pondasi sudah siap untuk di-scale up secara masif.";
+        }
+
+        return $diagnosis;
     }
 }

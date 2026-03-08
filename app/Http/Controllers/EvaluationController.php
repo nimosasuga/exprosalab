@@ -120,15 +120,39 @@ class EvaluationController extends Controller
         return redirect()->route('evaluation.result', ['id' => $evaluation->id]);
     }
 
-    /**
-     * Menampilkan hasil
+/**
+     * Menampilkan hasil diagnosis, skor per kategori, dan saran strategis.
      */
     public function result($id)
     {
         $evaluation = Evaluation::findOrFail($id);
 
-        // ... (Kode result yang sudah ada sebelumnya bisa dipertahankan di sini)
-        // Untuk penyederhanaan, asumsikan logika result sama seperti sebelumnya
-        return view('evaluation.result', compact('evaluation'));
+        $answers = EvaluationAnswer::with('question.category')
+            ->where('evaluation_id', $evaluation->id)
+            ->get();
+
+        // Inisialisasi 5 pilar sistem bisnis yang baru
+        $scores = [
+            'market' => 0,
+            'visibility' => 0,
+            'conversion' => 0,
+            'monetization' => 0,
+            'system' => 0
+        ];
+
+        // Hitung total skor per kategori
+        foreach ($answers as $answer) {
+            if ($answer->question && $answer->question->category) {
+                $categoryCode = $answer->question->category->code;
+                if (isset($scores[$categoryCode])) {
+                    $scores[$categoryCode] += $answer->score;
+                }
+            }
+        }
+
+        // Panggil Service untuk menghasilkan diagnosis
+        $diagnosis = $this->evaluationService->generateDiagnosis($scores);
+
+        return view('evaluation.result', compact('evaluation', 'scores', 'diagnosis'));
     }
 }
