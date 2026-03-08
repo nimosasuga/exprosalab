@@ -29,23 +29,27 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-public function store(Request $request): RedirectResponse
+    public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
-        // Cari ID untuk role pengguna gratis ('free')
+        // Ambil role 'free'.
         $defaultRole = Role::where('name', 'free')->first();
 
-        // Buat user dengan menyertakan role_id
+        // JIKA ROLE TIDAK ADA, JANGAN LANJUT (Cegah Integrity Violation)
+        if (!$defaultRole) {
+            return back()->withErrors(['email' => 'Sistem belum siap. Role default tidak ditemukan. Harap hubungi admin atau jalankan RoleSeeder.']);
+        }
+
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role_id' => $defaultRole ? $defaultRole->id : 1, // Masukkan role_id di sini
+            'role_id' => $defaultRole->id, // Gunakan ID yang benar-benar ada di DB
         ]);
 
         event(new Registered($user));
