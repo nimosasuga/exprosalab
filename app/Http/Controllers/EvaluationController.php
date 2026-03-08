@@ -8,6 +8,7 @@ use App\Models\Evaluation;
 use App\Models\EvaluationAnswer;
 use App\Models\EvaluationCategory;
 use App\Services\EvaluationService;
+use Illuminate\Support\Facades\Auth; // Tambahkan import Facade Auth ini
 
 class EvaluationController extends Controller
 {
@@ -23,11 +24,11 @@ class EvaluationController extends Controller
      */
     public function initWizard()
     {
-        $business = Business::where('user_id', auth()->id())->first();
-
-        if (!$business) {
-            return redirect()->route('dashboard')->with('error', 'Silakan buat profil bisnis terlebih dahulu.');
-        }
+        // Gunakan Auth::id() dan Auth::user() agar Intelephense tidak protes
+        $business = Business::firstOrCreate(
+            ['user_id' => Auth::id()],
+            ['business_name' => 'Bisnis ' . Auth::user()->name]
+        );
 
         // Cek apakah ada draft yang belum selesai
         $evaluation = Evaluation::firstOrCreate(
@@ -43,11 +44,10 @@ class EvaluationController extends Controller
      */
     public function showStep($step)
     {
-        $business = Business::where('user_id', auth()->id())->first();
+        $business = Business::where('user_id', Auth::id())->first();
         $evaluation = Evaluation::where('business_id', $business->id)->where('status', 'draft')->firstOrFail();
 
         // Ambil kategori berdasarkan urutan step (1 = Market, 2 = Visibility, dll)
-        // Pastikan urutan kategori di database sesuai dengan ID atau kita bisa skip menggunakan offset
         $category = EvaluationCategory::with('questions')->orderBy('id')->skip($step - 1)->first();
 
         if (!$category) {
@@ -72,7 +72,7 @@ class EvaluationController extends Controller
         foreach ($request->answers as $questionId => $score) {
             EvaluationAnswer::updateOrCreate(
                 [
-                    'user_id' => auth()->id(),
+                    'user_id' => Auth::id(), // Gunakan Auth::id() di sini juga
                     'question_id' => $questionId,
                     'evaluation_id' => $evaluation->id
                 ],
@@ -100,15 +100,18 @@ class EvaluationController extends Controller
         $totalScore = 0;
 
         foreach ($answers as $answer) {
-            $categoryCode = $answer->question->category->code;
-            if (!isset($scores[$categoryCode])) {
-                $scores[$categoryCode] = 0;
+            // Pastikan tidak error jika relasi kosong
+            if ($answer->question && $answer->question->category) {
+                $categoryCode = $answer->question->category->code;
+                if (!isset($scores[$categoryCode])) {
+                    $scores[$categoryCode] = 0;
+                }
+                $scores[$categoryCode] += $answer->score;
+                $totalScore += $answer->score;
             }
-            $scores[$categoryCode] += $answer->score;
-            $totalScore += $answer->score;
         }
 
-        // Panggil Service untuk kalkulasi
+        // Panggil Service untuk kalkulasi kesehatan akhir
         $healthStatus = $this->evaluationService->determineHealthStatus($totalScore);
 
         $evaluation->update([
@@ -120,7 +123,7 @@ class EvaluationController extends Controller
         return redirect()->route('evaluation.result', ['id' => $evaluation->id]);
     }
 
-/**
+    /**
      * Menampilkan hasil diagnosis, skor per kategori, dan saran strategis.
      */
     public function result($id)
