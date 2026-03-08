@@ -6,22 +6,14 @@ use Illuminate\Database\Eloquent\Model;
 
 class Evaluation extends Model
 {
+    // Tambahkan status, current_step, total_score, dan business_health
     protected $fillable = [
         'business_id',
-        'market_score',
-        'product_score',
-        'marketing_score',
-        'operation_score',
-        'finance_score',
-        'total_score',
         'business_health',
-        'diagnosis'
+        'total_score',
+        'status',
+        'current_step'
     ];
-    
-    public function answers()
-    {
-    return $this->hasMany(EvaluationAnswer::class);
-    }
 
     public function business()
     {

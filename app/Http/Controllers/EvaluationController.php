@@ -160,4 +160,30 @@ class EvaluationController extends Controller
 
         return view('evaluation.result', compact('evaluation', 'scores', 'diagnosis'));
     }
+
+    /**
+     * Menangani klik menu "Evaluation Results" dari Sidebar
+     */
+    public function indexResults()
+    {
+        $business = Business::where('user_id', Auth::id())->first();
+
+        if (!$business) {
+            return redirect()->route('dashboard');
+        }
+
+        // Cari evaluasi terakhir yang sudah selesai
+        $latestEvaluation = Evaluation::where('business_id', $business->id)
+            ->where('status', 'completed')
+            ->latest()
+            ->first();
+
+        if (!$latestEvaluation) {
+            // Jika belum ada yang selesai, arahkan kembali ke dashboard
+            return redirect()->route('dashboard')->with('status', 'Anda belum memiliki hasil evaluasi yang selesai.');
+        }
+
+        // Jika ada, langsung arahkan ke halaman hasil yang sesuai
+        return redirect()->route('evaluation.result', ['id' => $latestEvaluation->id]);
+    }
 }

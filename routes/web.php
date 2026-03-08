@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Route;
 | Public Routes
 |--------------------------------------------------------------------------
 */
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -65,6 +66,7 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
     Route::get('/evaluation/step/{step}', [EvaluationController::class, 'showStep'])->name('evaluation.step');
     Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
     Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
+    Route::get('/results', [EvaluationController::class, 'indexResults'])->name('results.index');
 });
 
 /*
@@ -85,7 +87,6 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/analytics', function () {
         return view('admin.analytics');
     })->name('analytics');
-
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
