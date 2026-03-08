@@ -38,17 +38,17 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <x-dropdown-link :href="route('profile.edit')" class="text-slate-700 hover:bg-slate-50">
-                            {{ __('Profil Saya') }}
+
+                        <x-dropdown-link :href="route('profile.edit')">
+                            {{ __('Edit Profil & Bisnis') }}
                         </x-dropdown-link>
 
-                        <!-- Authentication -->
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <x-dropdown-link :href="route('logout')"
-                                onclick="event.preventDefault(); this.closest('form').submit();"
-                                class="text-red-600 hover:bg-red-50">
-                                {{ __('Keluar (Logout)') }}
+
+                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();
+                                this.closest('form').submit();">
+                                {{ __('Log Out') }}
                             </x-dropdown-link>
                         </form>
                     </x-slot>
