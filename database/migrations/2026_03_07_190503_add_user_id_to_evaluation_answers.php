@@ -9,9 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('evaluation_answers', function (Blueprint $table) {
-    
+
             $table->unsignedBigInteger('user_id')->nullable()->after('id');
-    
+
         });
     }
 

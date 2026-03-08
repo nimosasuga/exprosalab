@@ -56,14 +56,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:premium'])->group(function () {
-
     Route::get('/premium', function () {
         return view('premium.dashboard');
     })->name('premium.dashboard');
 
-    // Logika pengisian evaluasi
-    Route::get('/evaluation/start', [EvaluationController::class, 'start'])->name('evaluation.start');
-    Route::post('/evaluation/store', [EvaluationController::class, 'store'])->name('evaluation.store');
+    // Wizard Routes
+    Route::post('/evaluation/init', [EvaluationController::class, 'initWizard'])->name('evaluation.init');
+    Route::get('/evaluation/step/{step}', [EvaluationController::class, 'showStep'])->name('evaluation.step');
+    Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
     Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
 });
 
