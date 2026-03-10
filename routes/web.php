@@ -4,7 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InsightController;
-use App\Http\Controllers\SubscriptionController; // <-- 1. Tambahkan Controller baru kita di sini
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,7 +19,7 @@ Route::get('/', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Authenticated Routes (General)
+| Authenticated Routes (General) - BISA DIAKSES PENGGUNA GRATIS
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -32,20 +32,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('evaluation');
     })->name('evaluation.index');
 
-    // Results
-    Route::get('/results', function () {
-        return view('results');
-    })->name('results.index');
+    // --- RUTE EVALUASI (WIZARD) PINDAH KE SINI ---
+    Route::post('/evaluation/init', [EvaluationController::class, 'initWizard'])->name('evaluation.init');
+    Route::get('/evaluation/step/{step}', [EvaluationController::class, 'showStep'])->name('evaluation.step');
+    Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
+    Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
+    Route::get('/results', [EvaluationController::class, 'indexResults'])->name('results.index');
+    // ----------------------------------------------
 
-    // Insights
-    Route::get('/insights', function () {
-        return view('insights');
-    })->name('insights.index');
-
-    // --- 2. PERUBAHAN RUTE SUBSCRIPTION & CHECKOUT ---
+    // Subscription & Checkout
     Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
     Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout'])->name('subscription.checkout');
-    // --------------------------------------------------
 
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -55,20 +52,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Premium Routes (Evaluation Engine)
+| Premium Routes - HANYA UNTUK PENGGUNA BERBAYAR (PRO)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:premium'])->group(function () {
+
+    // Halaman khusus member Pro
     Route::get('/premium', function () {
         return view('premium.dashboard');
     })->name('premium.dashboard');
 
-    // Wizard Routes
-    Route::post('/evaluation/init', [EvaluationController::class, 'initWizard'])->name('evaluation.init');
-    Route::get('/evaluation/step/{step}', [EvaluationController::class, 'showStep'])->name('evaluation.step');
-    Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
-    Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
-    Route::get('/results', [EvaluationController::class, 'indexResults'])->name('results.index');
+    // --- BUSINESS INSIGHTS DIKUNCI DI SINI ---
     Route::get('/insights', [InsightController::class, 'index'])->name('insights.index');
 });
 

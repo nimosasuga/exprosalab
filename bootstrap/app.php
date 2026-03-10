@@ -3,7 +3,6 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Middleware\PremiumMiddleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -11,10 +10,13 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
-    ->withMiddleware(function (Middleware $middleware) {
-        // Daftarkan alias untuk middleware premium
+    ->withMiddleware(function (Middleware $middleware) { // <-- Pastikan tipe Middleware ada di sini
+
+        // Daftarkan alias middleware dengan cara Laravel 11
         $middleware->alias([
-            'premium' => PremiumMiddleware::class,
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            // Jika Anda punya middleware premium dari langkah sebelumnya, daftarkan juga di sini:
+            // 'premium' => \App\Http\Middleware\PremiumMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
