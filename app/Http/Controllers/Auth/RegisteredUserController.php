@@ -35,7 +35,15 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
             'business_name' => ['required', 'string', 'max:255'], // Validasi nama bisnis
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => [
+                'required',
+                'string',
+                'lowercase',
+                'email',
+                'whatsapp_number' => ['required', 'string', 'max:20'],
+                'max:255',
+                'unique:' . User::class
+            ],
             'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
@@ -47,6 +55,7 @@ class RegisteredUserController extends Controller
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
+            'whatsapp_number' => $request->whatsapp_number,
             'password' => Hash::make($request->password),
             'role_id' => $defaultRole->id,
         ]);

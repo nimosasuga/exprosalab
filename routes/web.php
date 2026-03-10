@@ -8,6 +8,7 @@ use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\QuestionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\AnalyticsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -81,9 +82,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('questions', QuestionController::class)->except(['show']);
 
     // Analytics
-    Route::get('/analytics', function () {
-        return view('admin.analytics');
-    })->name('analytics');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
 });
 
 require __DIR__ . '/auth.php';
