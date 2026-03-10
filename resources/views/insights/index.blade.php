@@ -1,9 +1,40 @@
 <x-app-layout>
 
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-slate-900">Business Insights & Action Plan</h1>
-        <p class="text-slate-500 mt-2">Rekomendasi strategis AI yang dirancang khusus untuk mengatasi kelemahan terbesar
-            bisnis Anda.</p>
+    <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900">Business Insights & Action Plan</h1>
+            <p class="text-slate-500 mt-2">
+                Rekomendasi strategis AI yang dirancang khusus untuk mengatasi kelemahan terbesar bisnis Anda.
+            </p>
+            @if(isset($currentEvaluation))
+            <div
+                class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
+                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                    </path>
+                </svg>
+                Menampilkan Evaluasi: {{ $currentEvaluation->created_at->format('d M Y - H:i') }}
+            </div>
+            @endif
+        </div>
+
+        @if(isset($histories) && $histories->count() > 1)
+        <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm min-w-[260px]">
+            <label for="history_selector"
+                class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pilih Riwayat
+                Evaluasi</label>
+            <select id="history_selector" onchange="window.location.href=this.value"
+                class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm bg-slate-50 cursor-pointer">
+                @foreach($histories as $history)
+                <option value="{{ route('insights.index', $history->id) }}" {{ (isset($currentEvaluation) &&
+                    $currentEvaluation->id === $history->id) ? 'selected' : '' }}>
+                    {{ $history->created_at->format('d M Y') }} (Skor: {{ $history->total_score }}%)
+                </option>
+                @endforeach
+            </select>
+        </div>
+        @endif
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -53,7 +84,6 @@
                             class="flex items-center justify-center w-10 h-10 rounded-full border-4 border-white bg-indigo-600 text-white font-bold shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
                             {{ $index + 1 }}
                         </div>
-
                         <div
                             class="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] bg-slate-50 hover:bg-indigo-50/50 transition-colors p-5 rounded-xl border border-slate-200 shadow-sm">
                             <h4 class="font-bold text-slate-800 text-lg mb-2">{{ $step['title'] }}</h4>

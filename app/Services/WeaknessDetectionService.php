@@ -8,7 +8,7 @@ use App\Models\Business;
 
 class WeaknessDetectionService
 {
-    public function detect($userId)
+    public function detect($userId, $evaluationId = null)
     {
         // Cari bisnis milik user
         $business = Business::where('user_id', $userId)->first();
@@ -16,11 +16,11 @@ class WeaknessDetectionService
             return ['scores' => [], 'weakest_category' => null, 'total_score' => 0, 'health_status' => 'Unknown'];
         }
 
-        // Ambil evaluasi terakhir yang sudah selesai (completed)
-        $latestEvaluation = Evaluation::where('business_id', $business->id)
-            ->where('status', 'completed')
-            ->latest()
-            ->first();
+        // Ambil evaluasi berdasarkan ID spesifik (jika ada), ATAU yang paling baru (jika kosong)
+        $query = Evaluation::where('business_id', $business->id)->where('status', 'completed');
+        $latestEvaluation = $evaluationId
+            ? $query->where('id', $evaluationId)->first()
+            : $query->latest()->first();
 
         if (!$latestEvaluation) {
             return ['scores' => [], 'weakest_category' => null, 'total_score' => 0, 'health_status' => 'Unknown'];
@@ -63,7 +63,9 @@ class WeaknessDetectionService
             'scores' => $scores,
             'weakest_category' => $weakestCategory,
             'total_score' => $latestEvaluation->total_score,
-            'health_status' => $latestEvaluation->business_health
+            'health_status' => $latestEvaluation->business_health,
+            // Kembalikan juga data evaluasinya ke controller
+            'evaluation' => $latestEvaluation,
         ];
     }
 

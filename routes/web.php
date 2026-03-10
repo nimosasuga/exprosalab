@@ -63,7 +63,7 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
     })->name('premium.dashboard');
 
     // --- BUSINESS INSIGHTS DIKUNCI DI SINI ---
-    Route::get('/insights', [InsightController::class, 'index'])->name('insights.index');
+    Route::get('/insights/{id?}', [InsightController::class, 'index'])->name('insights.index');
 });
 
 /*
