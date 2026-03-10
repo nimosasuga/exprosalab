@@ -8,7 +8,7 @@ use App\Models\Evaluation;
 use App\Models\EvaluationAnswer;
 use App\Models\EvaluationCategory;
 use App\Services\EvaluationService;
-use Illuminate\Support\Facades\Auth; // Tambahkan import Facade Auth ini
+use Illuminate\Support\Facades\Auth;
 
 class EvaluationController extends Controller
 {
@@ -17,6 +17,27 @@ class EvaluationController extends Controller
     public function __construct(EvaluationService $evaluationService)
     {
         $this->evaluationService = $evaluationService;
+    }
+
+    /**
+     * Menampilkan halaman utama Business Evaluation & Riwayat
+     */
+    public function index()
+    {
+        // Cari profil bisnis milik user yang sedang login
+        $business = Business::where('user_id', Auth::id())->first();
+
+        // Jika user belum punya profil bisnis, kirimkan daftar riwayat kosong
+        if (!$business) {
+            $evaluations = collect(); // Membuat himpunan kosong (agar tidak error di view)
+        } else {
+            // Jika punya, ambil semua riwayat evaluasinya dari yang paling baru
+            $evaluations = Evaluation::where('business_id', $business->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+        return view('evaluation', compact('evaluations'));
     }
 
     /**
@@ -74,7 +95,7 @@ class EvaluationController extends Controller
         foreach ($request->answers as $questionId => $score) {
             EvaluationAnswer::updateOrCreate(
                 [
-                    'user_id' => Auth::id(), // Gunakan Auth::id() di sini juga
+                    'user_id' => Auth::id(),
                     'question_id' => $questionId,
                     'evaluation_id' => $evaluation->id
                 ],

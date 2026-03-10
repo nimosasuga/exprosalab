@@ -29,9 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Business Evaluation Start Page
-    Route::get('/evaluation', function () {
-        return view('evaluation');
-    })->name('evaluation.index');
+    Route::get('/evaluation', [EvaluationController::class, 'index'])->name('evaluation.index');
 
     // --- RUTE EVALUASI (WIZARD) PINDAH KE SINI ---
     Route::post('/evaluation/init', [EvaluationController::class, 'initWizard'])->name('evaluation.init');
