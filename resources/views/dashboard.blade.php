@@ -81,8 +81,8 @@
             <div class="text-xl font-bold text-slate-800 mt-1 uppercase">
                 {{ $weakest }}
             </div>
-            <a href="{{ route('insights.index') }}"
-                class="text-sm text-indigo-600 font-medium hover:text-indigo-800 mt-4 inline-flex items-center gap-1">
+            <a href="{{ auth()->user()->isPremium() ? route('insights.index') : route('subscription.index') }}"
+                class="text-indigo-600 hover:text-indigo-900 text-sm font-medium flex items-center">
                 Lihat Solusi <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
                 </svg>
