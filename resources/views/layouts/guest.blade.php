@@ -15,13 +15,14 @@
 </head>
 
 <body
-    class="font-['Inter'] text-zinc-900 antialiased bg-zinc-50 selection:bg-zinc-900 selection:text-white flex flex-col min-h-screen">
+    class="font-['Inter'] text-zinc-900 antialiased bg-zinc-50/50 selection:bg-zinc-900 selection:text-white flex flex-col min-h-screen">
 
-    <header class="w-full bg-white border-b border-zinc-200">
+    <header class="w-full bg-white/80 backdrop-blur-md border-b border-zinc-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-20">
-                <a href="/" class="flex items-center gap-3">
-                    <div class="w-8 h-8 bg-zinc-900 flex items-center justify-center">
+                <a href="/" class="flex items-center gap-3 group">
+                    <div
+                        class="w-9 h-9 bg-zinc-900 rounded-xl flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300 transform group-hover:-translate-y-0.5">
                         <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -29,19 +30,24 @@
                     </div>
                     <span class="font-semibold text-lg tracking-tight text-zinc-900">Exprosa Lab.</span>
                 </a>
-                <a href="/" class="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition">Kembali ke
+                <a href="/" class="text-sm font-medium text-zinc-500 hover:text-zinc-900 transition-colors">Kembali ke
                     Beranda</a>
             </div>
         </div>
     </header>
 
-    <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-        <div class="w-full max-w-md bg-white border border-zinc-200 p-8 sm:p-10 shadow-sm">
+    <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative">
+        <div
+            class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-zinc-200/50 rounded-full blur-3xl pointer-events-none -z-10">
+        </div>
+
+        <div
+            class="w-full max-w-md bg-white border border-zinc-100 p-8 sm:p-10 shadow-xl shadow-zinc-200/40 rounded-3xl relative z-10">
             {{ $slot }}
         </div>
     </div>
 
-    <footer class="py-8 text-center border-t border-zinc-200">
+    <footer class="py-8 text-center border-t border-zinc-200 bg-white">
         <p class="text-xs text-zinc-400 font-light">&copy; {{ date('Y') }} Exprosa Lab Business Advisory. Seluruh hak
             cipta dilindungi.</p>
     </footer>
