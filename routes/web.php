@@ -3,8 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\DashboardController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\InsightController;
+use App\Http\Controllers\SubscriptionController; // <-- 1. Tambahkan Controller baru kita di sini
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ Route::get('/', function () {
 */
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard - Menggunakan Controller agar lebih rapi
+    // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Business Evaluation Start Page
@@ -41,10 +42,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return view('insights');
     })->name('insights.index');
 
-    // Subscription
-    Route::get('/subscription', function () {
-        return view('subscription');
-    })->name('subscription.index');
+    // --- 2. PERUBAHAN RUTE SUBSCRIPTION & CHECKOUT ---
+    Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
+    Route::post('/subscription/checkout', [SubscriptionController::class, 'checkout'])->name('subscription.checkout');
+    // --------------------------------------------------
 
     // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
