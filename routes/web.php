@@ -37,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
     Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
     Route::get('/results', [EvaluationController::class, 'indexResults'])->name('results.index');
+    Route::delete('/evaluation/{id}', [EvaluationController::class, 'destroy'])->name('evaluation.destroy');
     // ----------------------------------------------
 
     // Subscription & Checkout

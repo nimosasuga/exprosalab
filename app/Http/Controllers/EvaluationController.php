@@ -207,4 +207,22 @@ class EvaluationController extends Controller
         // Jika ada, langsung arahkan ke halaman hasil yang sesuai
         return redirect()->route('evaluation.result', ['id' => $latestEvaluation->id]);
     }
+    /**
+     * Menghapus riwayat evaluasi
+     */
+    public function destroy(Request $request, $id)
+    {
+        $evaluation = Evaluation::findOrFail($id);
+        $business = Business::where('user_id', Auth::id())->first();
+
+        // Keamanan: Pastikan evaluasi ini benar-benar milik bisnis user yang sedang login
+        if (!$business || $evaluation->business_id !== $business->id) {
+            return back()->with('error', 'Anda tidak memiliki izin untuk menghapus riwayat ini.');
+        }
+
+        // Hapus evaluasi (jawaban yang terkait juga akan otomatis terhapus jika Anda menggunakan cascade di database)
+        $evaluation->delete();
+
+        return back()->with('success', 'Riwayat evaluasi berhasil dihapus!');
+    }
 }
