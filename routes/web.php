@@ -7,6 +7,7 @@ use App\Http\Controllers\InsightController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\QuestionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
+
+    // Manajemen Pertanyaan (Gunakan Resource agar lebih ringkas)
+    Route::resource('questions', QuestionController::class)->except(['show']);
 
     Route::get('/questions', function () {
         return view('admin.questions');
