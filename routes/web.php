@@ -5,9 +5,9 @@ use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\SubscriptionController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\QuestionController;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,17 +29,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Business Evaluation Start Page
+    // Business Evaluation Hub
     Route::get('/evaluation', [EvaluationController::class, 'index'])->name('evaluation.index');
 
-    // --- RUTE EVALUASI (WIZARD) PINDAH KE SINI ---
+    // Wizard Evaluasi
     Route::post('/evaluation/init', [EvaluationController::class, 'initWizard'])->name('evaluation.init');
     Route::get('/evaluation/step/{step}', [EvaluationController::class, 'showStep'])->name('evaluation.step');
     Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
     Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
     Route::get('/results', [EvaluationController::class, 'indexResults'])->name('results.index');
     Route::delete('/evaluation/{id}', [EvaluationController::class, 'destroy'])->name('evaluation.destroy');
-    // ----------------------------------------------
 
     // Subscription & Checkout
     Route::get('/subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
@@ -53,17 +52,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Premium Routes - HANYA UNTUK PENGGUNA BERBAYAR (PRO)
+| Premium Routes - HANYA UNTUK PENGGUNA BERBAYAR (PRO) ATAU ADMIN
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:premium'])->group(function () {
 
-    // Halaman khusus member Pro
     Route::get('/premium', function () {
         return view('premium.dashboard');
     })->name('premium.dashboard');
 
-    // --- BUSINESS INSIGHTS DIKUNCI DI SINI ---
     Route::get('/insights/{id?}', [InsightController::class, 'index'])->name('insights.index');
 });
 
@@ -74,20 +71,16 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/users', [UserController::class, 'index'])->name('users');
     // Manajemen User
     Route::get('/users', [UserController::class, 'index'])->name('users');
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
-    // Manajemen Pertanyaan (Gunakan Resource agar lebih ringkas)
+    // Manajemen Pertanyaan (Sudah Menggunakan Resource)
     Route::resource('questions', QuestionController::class)->except(['show']);
 
-    Route::get('/questions', function () {
-        return view('admin.questions');
-    })->name('questions');
-
+    // Analytics
     Route::get('/analytics', function () {
         return view('admin.analytics');
     })->name('analytics');
