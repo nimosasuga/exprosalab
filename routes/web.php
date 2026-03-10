@@ -75,6 +75,11 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
     Route::get('/users', [UserController::class, 'index'])->name('users');
+    // Manajemen User
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::patch('/users/{user}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
 
     Route::get('/questions', function () {
         return view('admin.questions');
