@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\EvaluationController;
 use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\InsightController;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +68,7 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
     Route::post('/evaluation/step/{step}', [EvaluationController::class, 'saveStep'])->name('evaluation.saveStep');
     Route::get('/evaluation/result/{id}', [EvaluationController::class, 'result'])->name('evaluation.result');
     Route::get('/results', [EvaluationController::class, 'indexResults'])->name('results.index');
+    Route::get('/insights', [InsightController::class, 'index'])->name('insights.index');
 });
 
 /*
