@@ -2,26 +2,47 @@
     <div class="py-12 bg-gray-50 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            <div class="flex flex-col md:flex-row justify-between items-center bg-white shadow-sm rounded-lg p-6">
+            <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-800">Hasil Diagnosis Bisnis AI</h1>
-                    <p class="text-gray-500 mt-1">Berdasarkan 5 Pilar Sistem Bisnis Exprosa</p>
-                </div>
-                <div class="mt-4 md:mt-0 text-right">
-                    <h2 class="text-sm text-gray-500 uppercase tracking-wide">Total Skor</h2>
-                    <p class="text-4xl font-extrabold text-indigo-600">{{ $evaluation->total_score }} <span
-                            class="text-lg text-gray-400">/ 250</span></p>
-                    <div class="mt-2">
-                        Status:
-                        <span class="px-3 py-1 rounded-full text-sm font-bold
-                            @if($evaluation->business_health == 'Kritis (Critical)') bg-red-100 text-red-800
-                            @elseif($evaluation->business_health == 'Rentan (Weak)')
-                            @elseif($evaluation->business_health == 'Stabil (Stable)')
-                            @else @endif">
-                            {{ $evaluation->business_health }}
-                        </span>
+                    <div class="flex items-center gap-2 mb-2 text-sm text-indigo-600 font-bold">
+                        <a href="{{ route('evaluation.index') }}" class="hover:underline flex items-center gap-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                            </svg>
+                            Kembali ke Hub
+                        </a>
+                    </div>
+                    <h1 class="text-3xl font-extrabold text-slate-900">Laporan Hasil Evaluasi</h1>
+
+                    <div
+                        class="mt-3 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        Tanggal Evaluasi: {{ $evaluation->created_at->format('d M Y - H:i') }}
                     </div>
                 </div>
+
+                @if(isset($histories) && $histories->count() > 1)
+                <div class="bg-white p-3 rounded-xl border border-slate-200 shadow-sm min-w-[260px]">
+                    <label for="history_selector"
+                        class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Lihat
+                        Riwayat Lainnya</label>
+                    <select id="history_selector" onchange="window.location.href=this.value"
+                        class="block w-full text-sm border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm bg-slate-50 cursor-pointer">
+                        @foreach($histories as $history)
+                        <option value="{{ route('evaluation.result', $history->id) }}" {{ $evaluation->id ===
+                            $history->id ?
+                            'selected' : '' }}>
+                            {{ $history->created_at->format('d M Y') }} (Skor: {{ $history->total_score }}%)
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-2 md:grid-cols-5 gap-6">

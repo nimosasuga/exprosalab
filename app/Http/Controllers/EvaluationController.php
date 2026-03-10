@@ -149,15 +149,26 @@ class EvaluationController extends Controller
     /**
      * Menampilkan hasil diagnosis, skor per kategori, dan saran strategis.
      */
-    public function result($id)
+    public function result(Request $request, $id) // <-- Tambahkan Request $request di parameter
     {
         $evaluation = Evaluation::findOrFail($id);
 
+        // 1. PERBAIKAN KEAMANAN (MENCEGAH IDOR)
+        $user = $request->user();
+        $business = Business::where('user_id', $user->id)->first();
+
+        // Jika yang login BUKAN admin, pastikan ID evaluasi ini benar-benar milik bisnisnya!
+        if ($user->role !== 'admin') {
+            if (!$business || $evaluation->business_id !== $business->id) {
+                return redirect()->route('dashboard')->with('error', 'Akses ditolak! Anda tidak diizinkan melihat data evaluasi milik pengguna lain.');
+            }
+        }
+
+        // 2. AMBIL DATA JAWABAN
         $answers = EvaluationAnswer::with('question.category')
             ->where('evaluation_id', $evaluation->id)
             ->get();
 
-        // Inisialisasi 5 pilar sistem bisnis yang baru
         $scores = [
             'market' => 0,
             'visibility' => 0,
@@ -166,7 +177,6 @@ class EvaluationController extends Controller
             'system' => 0
         ];
 
-        // Hitung total skor per kategori
         foreach ($answers as $answer) {
             if ($answer->question && $answer->question->category) {
                 $categoryCode = $answer->question->category->code;
@@ -176,10 +186,16 @@ class EvaluationController extends Controller
             }
         }
 
-        // Panggil Service untuk menghasilkan diagnosis
         $diagnosis = $this->evaluationService->generateDiagnosis($scores);
 
-        return view('evaluation.result', compact('evaluation', 'scores', 'diagnosis'));
+        // 3. AMBIL SELURUH RIWAYAT UNTUK FITUR DROPDOWN (UX)
+        // Kita ambil semua riwayat yang statusnya completed milik bisnis ini
+        $histories = Evaluation::where('business_id', $evaluation->business_id)
+            ->where('status', 'completed')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('evaluation.result', compact('evaluation', 'scores', 'diagnosis', 'histories'));
     }
 
     /**
