@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InsightController;
 use App\Http\Controllers\SubscriptionController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Admin\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -73,9 +74,7 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/users', function () {
-        return view('admin.users');
-    })->name('users');
+    Route::get('/users', [UserController::class, 'index'])->name('users');
 
     Route::get('/questions', function () {
         return view('admin.questions');
