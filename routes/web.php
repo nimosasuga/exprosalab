@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\QuestionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AnalyticsController;
+use App\Http\Controllers\PremiumDashboardController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,6 +62,12 @@ Route::middleware(['auth', 'role:premium'])->group(function () {
     Route::get('/premium', function () {
         return view('premium.dashboard');
     })->name('premium.dashboard');
+
+    Route::get('/insights/{id?}', [InsightController::class, 'index'])->name('insights.index');
+
+    // Rute Dashboard Premium & Update Status Tugas
+    Route::get('/premium', [PremiumDashboardController::class, 'index'])->name('premium.dashboard');
+    Route::patch('/premium/action-plan/{id}', [PremiumDashboardController::class, 'updateTask'])->name('premium.action-plan.update');
 
     Route::get('/insights/{id?}', [InsightController::class, 'index'])->name('insights.index');
 });
