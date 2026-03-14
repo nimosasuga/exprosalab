@@ -75,39 +75,87 @@
                 </div>
             </div>
 
+            {{-- ================================================================
+            CHART SCRIPT
+            ================================================================ --}}
             @if($showChart)
-            <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm mb-8">
-                <div class="mb-6">
-                    <h3 class="text-lg font-semibold text-zinc-900">Performance Trend</h3>
-                    <p class="text-sm text-zinc-500 mt-1">
-                        Pergerakan skor kesehatan bisnis Anda dari waktu ke waktu.
-                    </p>
-                </div>
-                <div class="relative h-72 w-full">
-                    <canvas id="scoreChart"></canvas>
-                </div>
-            </div>
+            <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.umd.min.js"></script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+            // Kita gunakan json_encode PHP native agar tidak memicu ParseError di Blade
+            var chartLabels = {!! json_encode($chartLabels) !!};
+            var chartScores = {!! json_encode($chartScores) !!}.map(Number);
 
-            @elseif($showOneTip)
-            <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
-                <div class="mb-4">
-                    <h3 class="text-lg font-semibold text-zinc-900">Performance Trend</h3>
-                    <p class="text-sm text-zinc-500 mt-1">
-                        Pergerakan skor kesehatan bisnis Anda dari waktu ke waktu.
-                    </p>
-                </div>
-                <div
-                    class="h-32 flex flex-col items-center justify-center bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
-                    <svg class="w-8 h-8 text-zinc-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                    <p class="text-sm text-zinc-400 font-medium text-center px-4">
-                        Lakukan minimal <span class="font-bold text-zinc-600">2 kali evaluasi</span>
-                        untuk melihat tren performa Anda.
-                    </p>
-                </div>
-            </div>
+            var canvas = document.getElementById('scoreChart');
+            if (!canvas || chartLabels.length === 0) return;
+
+            new Chart(canvas.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{
+                        label: 'Total Score',
+                        data: chartScores,
+                        borderColor: '#3f3f46',
+                        backgroundColor: 'rgba(63, 63, 70, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#18181b',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#18181b',
+                            titleColor: '#e4e4e7',
+                            bodyColor: '#e4e4e7',
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function (context) {
+                                    return 'Score: ' + context.parsed.y;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: 250,
+                            border: { display: false },
+                            grid: {
+                                color: '#f4f4f5',
+                                drawTicks: false,
+                            },
+                            ticks: {
+                                color: '#71717a',
+                                padding: 10,
+                                font: { family: "'Inter', sans-serif", size: 12 }
+                            }
+                        },
+                        x: {
+                            border: { display: false },
+                            grid: { display: false },
+                            ticks: {
+                                color: '#71717a',
+                                padding: 10,
+                                font: { family: "'Inter', sans-serif", size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+            </script>
             @endif
 
             {{-- ================================================================
