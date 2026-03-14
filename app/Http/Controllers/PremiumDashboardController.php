@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\ActionPlan;
+use App\Models\Evaluation;
+use App\Models\Business;
 use App\Services\WeaknessDetectionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -11,31 +13,59 @@ class PremiumDashboardController extends Controller
 {
     protected $weaknessService;
 
-    // Melakukan injeksi WeaknessDetectionService
     public function __construct(WeaknessDetectionService $weaknessService)
     {
         $this->weaknessService = $weaknessService;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
+        $business = Business::where('user_id', $user->id)->first();
 
-        // Mengambil daftar Action Plan milik user
-        $actionPlans = ActionPlan::where('user_id', $user->id)->latest()->get();
+        if (!$business) {
+            return view('premium.dashboard', [
+                'actionPlans' => collect(),
+                'progress' => 0,
+                'histories' => collect(),
+                'selectedEvaluationId' => null,
+            ]);
+        }
 
-        // Jika user belum punya action plan sama sekali, buatkan dari hasil evaluasinya
-        if ($actionPlans->isEmpty()) {
-            $this->generateInitialActionPlans($user->id);
-            // Ambil ulang data setelah di-generate
-            $actionPlans = ActionPlan::where('user_id', $user->id)->latest()->get();
+        // Ambil semua riwayat evaluasi yang sudah selesai untuk dropdown
+        $histories = Evaluation::where('business_id', $business->id)
+            ->where('status', 'completed')
+            ->latest()
+            ->get();
+
+        // Tentukan ID evaluasi yang sedang dilihat (dari query string atau yang terbaru)
+        $selectedEvaluationId = $request->query('evaluation_id', $histories->first()?->id);
+
+        // Ambil Action Plan berdasarkan evaluasi yang dipilih
+        $actionPlans = ActionPlan::where('user_id', $user->id)
+            ->where('evaluation_id', $selectedEvaluationId)
+            ->latest()
+            ->get();
+
+        // Jika Action Plan belum ada untuk evaluasi ini, buatkan secara otomatis
+        if ($actionPlans->isEmpty() && $selectedEvaluationId) {
+            $this->generateActionPlansFromEvaluation($user->id, $selectedEvaluationId);
+            $actionPlans = ActionPlan::where('user_id', $user->id)
+                ->where('evaluation_id', $selectedEvaluationId)
+                ->latest()
+                ->get();
         }
 
         $completedCount = $actionPlans->where('status', 'completed')->count();
         $totalCount = $actionPlans->count();
         $progress = $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0;
 
-        return view('premium.dashboard', compact('actionPlans', 'progress'));
+        return view('premium.dashboard', compact(
+            'actionPlans',
+            'progress',
+            'histories',
+            'selectedEvaluationId'
+        ));
     }
 
     public function updateTask(Request $request, $id)
@@ -46,44 +76,44 @@ class PremiumDashboardController extends Controller
         $task->status = $task->status === 'pending' ? 'completed' : 'pending';
         $task->save();
 
+        // Kembali ke halaman dengan evaluation_id yang sama agar tidak kehilangan konteks
         return redirect()->back();
     }
 
-    // Fungsi cerdas untuk membuat tugas awal berdasarkan pilar terlemah
-    private function generateInitialActionPlans($userId)
+    /**
+     * Generate Action Plans berdasarkan evaluasi spesifik
+     */
+    private function generateActionPlansFromEvaluation($userId, $evaluationId)
     {
-        // 1. Dapatkan hasil deteksi kelemahan user menggunakan algoritma Anda
-        $analysis = $this->weaknessService->detect($userId);
+        // Gunakan service untuk deteksi kelemahan berdasarkan ID evaluasi spesifik
+        $analysis = $this->weaknessService->detect($userId, $evaluationId);
         $weakestCategory = $analysis['weakest_category'];
 
-        // Jika tidak ada data kelemahan (berarti user belum evaluasi), hentikan pembuatan tugas
+        // Jika tidak ada data kelemahan (user belum evaluasi), hentikan
         if (!$weakestCategory) {
             return;
         }
 
-        // 2. Ambil rancangan tugas spesifik dari WeaknessDetectionService
         $recommendations = $this->weaknessService->detailedActionPlan($weakestCategory);
 
-        // 3. Mapping kode kategori menjadi nama yang elegan untuk UI
         $categoryNames = [
-            'market' => 'Product-Market Fit',
-            'visibility' => 'Marketing & Traffic',
-            'conversion' => 'Sales & Conversion',
+            'market'       => 'Product-Market Fit',
+            'visibility'   => 'Marketing & Traffic',
+            'conversion'   => 'Sales & Conversion',
             'monetization' => 'Finance & Monetization',
-            'system' => 'System & Operations'
+            'system'       => 'System & Operations',
         ];
 
         $readableCategory = $categoryNames[$weakestCategory] ?? 'General Strategy';
 
-        // 4. Masukkan rencana tindakan ke dalam database user
         foreach ($recommendations as $rec) {
             ActionPlan::create([
-                'user_id' => $userId,
-                'category' => $readableCategory,
-                'title' => $rec['title'],
-                // Di dalam file service Anda, key deskripsinya adalah 'desc', bukan 'description'
-                'description' => $rec['desc'],
-                'status' => 'pending'
+                'user_id'       => $userId,
+                'evaluation_id' => $evaluationId,
+                'category'      => $readableCategory,
+                'title'         => $rec['title'],
+                'description'   => $rec['desc'],
+                'status'        => 'pending',
             ]);
         }
     }
