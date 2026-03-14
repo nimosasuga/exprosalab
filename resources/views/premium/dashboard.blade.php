@@ -8,7 +8,9 @@
     <div class="py-12 bg-zinc-50 min-h-screen font-['Inter']">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-8">
 
-            {{-- HEADER CARD: Judul + Dropdown Selector + Progress Bar --}}
+            {{-- ================================================================
+            SECTION 1: HEADER CARD
+            ================================================================ --}}
             <div class="bg-white border border-zinc-200 p-8">
                 <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
 
@@ -20,7 +22,7 @@
                             meningkatkan skor perusahaan Anda di kuartal berikutnya.
                         </p>
 
-                        {{-- Dropdown Riwayat Evaluasi --}}
+                        {{-- Dropdown (hanya muncul jika lebih dari 1 riwayat) --}}
                         @if(isset($histories) && $histories->count() > 1)
                         <div class="mt-5 flex items-center gap-3">
                             <label
@@ -32,14 +34,15 @@
                                     class="text-sm border-zinc-200 focus:border-zinc-900 focus:ring-0 rounded-lg py-1.5 pl-3 pr-10 transition-all bg-zinc-50 font-medium cursor-pointer">
                                     @foreach($histories as $history)
                                     <option value="{{ $history->id }}" {{ isset($selectedEvaluationId) &&
-                                        $selectedEvaluationId==$history->id ? 'selected' : '' }}>
-                                        Laporan #{{ $history->id }} — {{ $history->created_at->format('d M Y') }}
-                                        (Skor: {{ $history->total_score }})
+                                        $selectedEvaluationId==$history->id ? 'selected' :
+                                        '' }}>
+                                        {{ $history->created_at->format('d M Y') }} (Skor: {{ $history->total_score }})
                                     </option>
                                     @endforeach
                                 </select>
                             </form>
                         </div>
+
                         @elseif(isset($histories) && $histories->count() === 1)
                         <div
                             class="mt-4 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-indigo-100 text-indigo-700">
@@ -48,7 +51,8 @@
                                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
                                 </path>
                             </svg>
-                            Laporan: {{ $histories->first()->created_at->format('d M Y') }}
+                            {{ $histories->first()->created_at->format('d M Y') }} (Skor: {{
+                            $histories->first()->total_score }})
                         </div>
                         @endif
                     </div>
@@ -71,7 +75,44 @@
                 </div>
             </div>
 
-            {{-- ACTION PLAN TABLE --}}
+            @if($showChart)
+            <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm mb-8">
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold text-zinc-900">Performance Trend</h3>
+                    <p class="text-sm text-zinc-500 mt-1">
+                        Pergerakan skor kesehatan bisnis Anda dari waktu ke waktu.
+                    </p>
+                </div>
+                <div class="relative h-72 w-full">
+                    <canvas id="scoreChart"></canvas>
+                </div>
+            </div>
+
+            @elseif($showOneTip)
+            <div class="bg-white border border-zinc-200 rounded-2xl p-6 shadow-sm">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold text-zinc-900">Performance Trend</h3>
+                    <p class="text-sm text-zinc-500 mt-1">
+                        Pergerakan skor kesehatan bisnis Anda dari waktu ke waktu.
+                    </p>
+                </div>
+                <div
+                    class="h-32 flex flex-col items-center justify-center bg-zinc-50 rounded-xl border border-dashed border-zinc-200">
+                    <svg class="w-8 h-8 text-zinc-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                    </svg>
+                    <p class="text-sm text-zinc-400 font-medium text-center px-4">
+                        Lakukan minimal <span class="font-bold text-zinc-600">2 kali evaluasi</span>
+                        untuk melihat tren performa Anda.
+                    </p>
+                </div>
+            </div>
+            @endif
+
+            {{-- ================================================================
+            SECTION 3: ACTION PLAN TABLE
+            ================================================================ --}}
             <div class="bg-white border border-zinc-200">
                 <div class="px-8 py-6 border-b border-zinc-200 bg-zinc-50/50">
                     <h4 class="text-base font-semibold text-zinc-900 uppercase tracking-wide">
@@ -84,16 +125,13 @@
                     <div
                         class="p-8 flex flex-col sm:flex-row gap-6 items-start hover:bg-zinc-50/50 transition-colors {{ $task->status === 'completed' ? 'opacity-60' : '' }}">
 
-                        {{-- Toggle Button --}}
+                        {{-- Toggle Checklist Button --}}
                         <form method="POST" action="{{ route('premium.action-plan.update', $task->id) }}" class="mt-1">
                             @csrf
                             @method('PATCH')
-
-                            {{-- Teruskan evaluation_id agar setelah update tetap di laporan yang sama --}}
                             @if(isset($selectedEvaluationId))
                             <input type="hidden" name="evaluation_id" value="{{ $selectedEvaluationId }}">
                             @endif
-
                             <button type="submit"
                                 class="flex-shrink-0 w-6 h-6 border-2 flex items-center justify-center transition-colors focus:outline-none {{ $task->status === 'completed' ? 'border-zinc-900 bg-zinc-900' : 'border-zinc-300 hover:border-zinc-500' }}">
                                 @if($task->status === 'completed')
@@ -117,12 +155,10 @@
                                 <span class="text-xs font-medium text-green-600">✓ Diselesaikan</span>
                                 @endif
                             </div>
-
                             <h5
                                 class="text-lg font-medium text-zinc-900 mb-2 {{ $task->status === 'completed' ? 'line-through text-zinc-500' : '' }}">
                                 {{ $task->title }}
                             </h5>
-
                             <p
                                 class="text-sm text-zinc-500 leading-relaxed {{ $task->status === 'completed' ? 'line-through' : '' }}">
                                 {{ $task->description }}
@@ -131,7 +167,6 @@
                     </div>
 
                     @empty
-                    {{-- Empty State --}}
                     <div class="p-12 text-center flex flex-col items-center justify-center">
                         <div class="w-16 h-16 bg-zinc-100 rounded-full flex items-center justify-center mb-4">
                             <svg class="w-8 h-8 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -143,8 +178,7 @@
                         <h5 class="text-lg font-medium text-zinc-900 mb-2">Belum Ada Data Diagnostik</h5>
                         <p class="text-sm text-zinc-500 max-w-md mb-6 leading-relaxed">
                             Sistem AI kami memerlukan data metrik operasional Anda sebelum dapat merumuskan
-                            Rencana Aksi Eksklusif. Silakan selesaikan pengisian instrumen evaluasi terlebih
-                            dahulu.
+                            Rencana Aksi Eksklusif. Silakan selesaikan pengisian instrumen evaluasi terlebih dahulu.
                         </p>
                         <a href="{{ route('evaluation.index') }}"
                             class="px-6 py-3 text-sm font-medium text-white bg-zinc-900 hover:bg-zinc-800 transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-zinc-900 rounded-xl shadow-sm">
@@ -157,4 +191,103 @@
 
         </div>
     </div>
+
+    {{-- ================================================================
+    CHART SCRIPT
+    PENTING: Tidak menggunakan Alpine.data() karena @json di dalam
+    Alpine.data() menyebabkan ParseError "unexpected token ,".
+    Solusi: gunakan IIFE vanilla JS biasa — lebih ringan dan aman.
+    ================================================================ --}}
+    @if($showChart)
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        (function () {
+            // Data diinjeksi dari PHP menggunakan json_encode bawaan Blade
+            // Cara ini aman karena tidak bergantung pada lifecycle Alpine.js
+            var chartLabels = {!! json_encode($chartLabels) !!};
+            var chartScores = {!! json_encode($chartLabels) !!};
+
+            function renderChart() {
+                var canvas = document.getElementById('scoreChart');
+                if (!canvas || chartLabels.length === 0) return;
+
+                new Chart(canvas.getContext('2d'), {
+                    type: 'line',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [{
+                            label: 'Total Score',
+                            data: chartScores,
+                            borderColor: '#3f3f46',
+                            backgroundColor: 'rgba(63, 63, 70, 0.05)',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#18181b',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            tooltip: {
+                                backgroundColor: '#18181b',
+                                titleColor: '#e4e4e7',
+                                bodyColor: '#e4e4e7',
+                                padding: 12,
+                                cornerRadius: 8,
+                                displayColors: false,
+                                callbacks: {
+                                    label: function (context) {
+                                        return 'Score: ' + context.parsed.y;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 250, // Skor maks sistem (50 soal x 5 = 250)
+                                border: { display: false },
+                                grid: {
+                                    color: '#f4f4f5',
+                                    drawTicks: false,
+                                },
+                                ticks: {
+                                    color: '#71717a',
+                                    padding: 10,
+                                    font: { family: "'Inter', sans-serif", size: 12 }
+                                }
+                            },
+                            x: {
+                                border: { display: false },
+                                grid: { display: false },
+                                ticks: {
+                                    color: '#71717a',
+                                    padding: 10,
+                                    font: { family: "'Inter', sans-serif", size: 12 }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Pastikan DOM sudah siap sebelum mengakses canvas
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', renderChart);
+            } else {
+                renderChart();
+            }
+        })();
+    </script>
+    @endif
+
 </x-app-layout>

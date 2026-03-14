@@ -11,6 +11,7 @@ class ActionPlan extends Model
 
     protected $fillable = [
         'user_id',
+        'evaluation_id',
         'category',
         'title',
         'description',
