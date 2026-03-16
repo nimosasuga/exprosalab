@@ -23,6 +23,7 @@ class PremiumDashboardController extends Controller
         $user     = Auth::user();
         $business = Business::where('user_id', $user->id)->first();
 
+
         if (!$business) {
             return view('premium.dashboard', [
                 'actionPlans'          => collect(),
@@ -82,10 +83,15 @@ class PremiumDashboardController extends Controller
         $completedCount = $actionPlans->where('status', 'completed')->count();
         $totalCount     = $actionPlans->count();
         $progress       = $totalCount > 0 ? round(($completedCount / $totalCount) * 100) : 0;
+        // Pisahkan menjadi dua Collection agar mudah dirender di View
+        $quickWins = $actionPlans->where('priority', 'Quick Win');
+        $strategicTasks = $actionPlans->where('priority', 'Strategic');
 
         // Tambahkan variabel baru ke dalam compact()
         return view('premium.dashboard', compact(
             'actionPlans',
+            'quickWins',
+            'strategicTasks',
             'progress',
             'histories',
             'selectedEvaluationId',
@@ -154,15 +160,21 @@ class PremiumDashboardController extends Controller
 
         $readableCategory = $categoryNames[$weakestCategory] ?? 'General Strategy';
 
+        $index = 0;
         foreach ($recommendations as $rec) {
+            $priority = ($index < 2) ? 'Quick Win' : 'Strategic';
+
             ActionPlan::create([
                 'user_id'       => $userId,
                 'evaluation_id' => (int) $evaluationId,
                 'category'      => $readableCategory,
+                'priority'      => $priority, // Simpan prioritasnya
                 'title'         => $rec['title'],
                 'description'   => $rec['desc'],
                 'status'        => 'pending',
             ]);
+
+            $index++;
         }
     }
 }

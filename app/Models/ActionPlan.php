@@ -13,6 +13,7 @@ class ActionPlan extends Model
         'user_id',
         'evaluation_id',
         'category',
+        'priority',
         'title',
         'description',
         'status',
